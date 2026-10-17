@@ -2,6 +2,8 @@
 
 - WASAPI: always join the stream worker during drop, including when the
   Terminate command cannot be delivered; close the scheduling event afterward.
+- ALSA: use the API-compatible 0.11 bindings so applications can link native
+  CPAL 0.15 and 0.18 backends without conflicting `alsa-sys` link identities.
 
 # Version 0.15.3 (2024-03-04)
 

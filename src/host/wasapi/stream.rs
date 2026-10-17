@@ -159,11 +159,16 @@ impl Stream {
 impl Drop for Stream {
     #[inline]
     fn drop(&mut self) {
-        if self.push_command(Command::Terminate).is_ok() {
-            self.thread.take().unwrap().join().unwrap();
-            unsafe {
-                let _ = Foundation::CloseHandle(self.pending_scheduled_event);
-            }
+        let terminate_sent = self.push_command(Command::Terminate).is_ok();
+        // A disconnected command channel can precede worker teardown. Reap its
+        // handle even when Terminate cannot be delivered.
+        let joined = self.thread.take().unwrap().join();
+        unsafe {
+            let _ = Foundation::CloseHandle(self.pending_scheduled_event);
+        }
+        // Preserve the previous panic policy for a successfully sent command.
+        if terminate_sent {
+            joined.unwrap();
         }
     }
 }

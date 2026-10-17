@@ -1,5 +1,8 @@
 # Unreleased
 
+- WASAPI: always join the stream worker during drop, including when the
+  Terminate command cannot be delivered; close the scheduling event afterward.
+
 # Version 0.15.3 (2024-03-04)
 
 - Add `try_with_sample_rate`, a non-panicking variant of `with_sample_rate`.
